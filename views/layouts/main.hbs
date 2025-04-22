@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="{{description}}">
+  <meta name="keywords" content="{{keywords}}">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/css/style.css">
+  {{#if extraCss}}
+    {{#each extraCss}}
+      <link rel="stylesheet" href="{{this}}">
+    {{/each}}
+  {{/if}}
+  {{#if extraJsHead}}
+    {{#each extraJsHead}}
+      <script src="{{this}}"></script>
+    {{/each}}
+  {{/if}}
+</head>
+<body>
+<header>
+  <h1><strong>libre lente</strong></h1>
+  {{#if isAuthenticated}}
+    <form action="/auth/logout" method="post" style="display:inline;">
+      <button type="submit">Logout</button>
+    </form>
+  {{else}}
+    <a href="/auth/login">Login</a>
+  {{/if}}
+</header>
+{{> navigation}}
+{{{body}}}
+{{#if extraJsBody}}
+  {{#each extraJsBody}}
+    <script src="{{this}}"></script>
+  {{/each}}
+{{/if}}
+</body>
+</html>

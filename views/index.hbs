@@ -1,10 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>App</title>
-</head>
-<body>
-{{ message }}
-</body>
-</html>
+<main>
+  <div class="welcome-section">
+    <h2>Enjoy the beauty of various places</h2>
+    <h3>And explore the stories behind the photos</h3>
+    <button type="button" class="welcome-to-blog-button"><a href="/blog">Learn More</a></button>
+  </div>
+
+  <h2 class="post-header">Recent posts</h2>
+
+  <div class="posts-section">
+    {{#each posts}}
+      <div class="post-item">
+        <div class="post-text">
+          <h3>{{title}}</h3>
+          <p>{{description}}</p>
+          <button type="button" class="to-post-button"><a href="/blog">Read More</a></button>
+        </div>
+        <img src="{{image}}" alt="">
+      </div>
+    {{/each}}
+  </div>
+
+  <div class="goods-section">
+    <h3>Capture the colourfulness of the moments</h3>
+    <h4>Check out the new collection of postcards and posters inspired by the atmosphere of the mysterious autumn forest</h4>
+    <button type="button" class="to-goods-button"><a href="/goods">Buy Now</a></button>
+  </div>
+
+  <div class="subscribe-section" id="contact">
+    <h3>libre lente</h3>
+    <h4>Stay up to date with new updates</h4>
+    <p>Follow in Telegram and Vkontakte</p>
+  </div>
+</main>
+
