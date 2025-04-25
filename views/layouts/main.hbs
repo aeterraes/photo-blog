@@ -16,6 +16,9 @@
       <script src="{{this}}"></script>
     {{/each}}
   {{/if}}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </head>
 <body>
 <header>
@@ -29,11 +32,69 @@
   {{/if}}
 </header>
 {{> navigation}}
-{{{body}}}
+{{#unless redirect}}
+  {{{body}}}
+{{/unless}}
 {{#if extraJsBody}}
   {{#each extraJsBody}}
     <script src="{{this}}"></script>
   {{/each}}
 {{/if}}
+<script>
+
+  const eventSource = new EventSource('/gallery/stream');
+  toastr.options = {
+    "closeButton": true,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": true,
+    "positionClass": "toast-top-right",
+    "preventDuplicates": false,
+    "onclick": null,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "5000",
+    "extendedTimeOut": "1000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+  };
+  eventSource.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+
+    localStorage.setItem('notification', JSON.stringify(message));
+
+    if (document.visibilityState === 'visible') {
+      showToast(message);
+    }
+  };
+
+  function showToast(message) {
+    if (message.action === 'create') {
+      toastr.success('Добавлено новое изображение!', 'С кайфом!');
+    } else if (message.action === 'update') {
+      toastr.info('Изображение обновлено.', 'Новость!!');
+    } else if (message.action === 'delete') {
+      toastr.warning('Изображение удалено.', 'Шок-контент');
+    }
+  }
+
+  eventSource.onerror = (err) => {
+    console.error('SSE error:', err);
+    toastr.error('Ошибка подключения к серверу.', 'Пупупу');
+  };
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') {
+      const notification = localStorage.getItem('notification');
+      if (notification) {
+        const message = JSON.parse(notification);
+        showToast(message);
+        localStorage.removeItem('notification');
+      }
+    }
+  });
+</script>
 </body>
 </html>

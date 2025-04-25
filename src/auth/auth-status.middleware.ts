@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { jwtConstants } from 'src/auth/constants';
+import { jwtConstants } from './constants';
 
 @Injectable()
 export class AuthStatusMiddleware implements NestMiddleware {
@@ -13,12 +13,10 @@ export class AuthStatusMiddleware implements NestMiddleware {
         req.user = decoded;
       } catch (err) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
         req.user = null;
       }
     } else {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       req.user = null;
     }
     next();

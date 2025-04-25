@@ -1,11 +1,13 @@
 <div class="goods-container">
   {{#each goods}}
     <div class="goods-item">
-      <img src="{{image}}" alt="">
+      <img src="{{image}}" alt="{{name}}" />
       <div class="goods-info">
         <h3 class="goods-name">{{name}}</h3>
         <p class="goods-description">{{description}}</p>
-        <button class="buy-now-button"><a href="#will-be-soon">Buy Now</a></button>
+        <button class="buy-now-button">
+          <a href="#will-be-soon">Buy Now</a>
+        </button>
       </div>
     </div>
   {{/each}}

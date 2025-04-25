@@ -3,14 +3,14 @@
     <div class="posts-item">
       <h3 class="post-title">{{title}}</h3>
       <p class="post-date">{{date}}</p>
-      <img src="{{image}}" alt="">
+      <img src="{{image}}" alt="{{title}}">
       <p class="post-description">{{description}}</p>
-      <button class="read-more-button"><a href="/blog">Read More</a></button>
+      <a href="/post/{{this.id}}" class="read-more-button">Read More</a>
     </div>
   {{/each}}
 </div>
 
-<a href="/" class="back-home">Back to Home</a>
+<a href="/home" class="back-home">Back to Home</a>
 
 <div class="subscribe-section" id="contact">
   <h3>libre lente</h3>

@@ -1,0 +1,55 @@
+<div class="merch-details-container">
+  <h1>{{title}}</h1>
+
+  <div class="package-header">
+    <div class="package-meta">
+      <p><span class="meta-label">Merch Type:</span> {{package.merchType}}</p>
+      <p><span class="meta-label">Design Type:</span> {{package.designType}}</p>
+      <p><span class="meta-label">Collection:</span> {{package.collection}}</p>
+      <p><span class="meta-label">Created:</span> {{package.dateCreated}}</p>
+    </div>
+
+    <div class="package-actions">
+      <a href="/merch/{{package.id}}/edit" class="action-btn edit-btn">Edit</a>
+      <form action="/merch/{{package.id}}" method="post" class="delete-form">
+        <input type="hidden" name="_method" value="delete">
+        <button type="submit" class="action-btn delete-btn">Delete</button>
+      </form>
+    </div>
+  </div>
+
+  {{#if package.images.length}}
+    <div class="images-section">
+      <h2>Images</h2>
+      <div class="images-grid">
+        {{#each package.images}}
+          <div class="image-card">
+            <img src="{{this.url}}" alt="Merch image {{@index}}" class="merch-image">
+          </div>
+        {{/each}}
+      </div>
+    </div>
+  {{/if}}
+
+  <div class="products-section">
+    <h2>Products</h2>
+    <div class="products-grid">
+      {{#each package.products}}
+        <div class="product-card">
+          {{#if this.imageUrl}}
+            <img src="{{this.imageUrl}}" alt="{{this.name}}" class="product-image">
+          {{/if}}
+          <div class="product-info">
+            <h3>{{this.name}}</h3>
+            <p class="product-description">{{this.description}}</p>
+            <p class="product-price">${{this.price}}</p>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+
+  <div class="back-link">
+    <a href="/merch">&larr; Back to All Packages</a>
+  </div>
+</div>
