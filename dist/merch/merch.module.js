@@ -10,13 +10,24 @@ exports.MerchModule = void 0;
 const common_1 = require("@nestjs/common");
 const merch_service_1 = require("./merch.service");
 const merch_controller_1 = require("./merch.controller");
+const typeorm_1 = require("@nestjs/typeorm");
+const merch_entity_1 = require("./entities/merch.entity");
+const product_entity_1 = require("../product/entities/product.entity");
+const image_entity_1 = require("../gallery/entities/image.entity");
+const user_entity_1 = require("../user/entities/user.entity");
+const gallery_module_1 = require("../gallery/gallery.module");
 let MerchModule = class MerchModule {
 };
 exports.MerchModule = MerchModule;
 exports.MerchModule = MerchModule = __decorate([
     (0, common_1.Module)({
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([merch_entity_1.Merch, product_entity_1.Product, image_entity_1.Image, user_entity_1.User]),
+            gallery_module_1.GalleryModule,
+        ],
         controllers: [merch_controller_1.MerchController],
         providers: [merch_service_1.MerchService],
+        exports: [merch_service_1.MerchService],
     })
 ], MerchModule);
 //# sourceMappingURL=merch.module.js.map

@@ -72,17 +72,17 @@
 
   function showToast(message) {
     if (message.action === 'create') {
-      toastr.success('Добавлено новое изображение!', 'Успех!');
+      toastr.success('Добавлено новое изображение!', 'С кайфом!');
     } else if (message.action === 'update') {
-      toastr.info('Изображение обновлено.', 'Информация');
+      toastr.info('Изображение обновлено.', 'Новость!!');
     } else if (message.action === 'delete') {
-      toastr.warning('Изображение удалено.', 'Внимание');
+      toastr.warning('Изображение удалено.', 'Шок-контент');
     }
   }
 
   eventSource.onerror = (err) => {
     console.error('SSE error:', err);
-    toastr.error('Ошибка подключения к серверу.', 'Ошибка');
+    toastr.error('Ошибка подключения к серверу.', 'Пупупу');
   };
 
   document.addEventListener('visibilitychange', function () {

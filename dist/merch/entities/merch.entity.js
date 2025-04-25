@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Merch = void 0;
 const typeorm_1 = require("typeorm");
 const image_entity_1 = require("../../gallery/entities/image.entity");
+const product_entity_1 = require("../../product/entities/product.entity");
+const user_entity_1 = require("../../user/entities/user.entity");
 let Merch = class Merch {
 };
 exports.Merch = Merch;
@@ -20,21 +22,38 @@ __decorate([
     __metadata("design:type", Number)
 ], Merch.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], Merch.prototype, "merch_type", void 0);
+    (0, typeorm_1.Column)({ name: 'user_id' }),
+    __metadata("design:type", Number)
+], Merch.prototype, "userId", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.merchPackages, { onDelete: 'CASCADE' }),
+    (0, typeorm_1.JoinColumn)({ name: 'user_id' }),
+    __metadata("design:type", user_entity_1.User)
+], Merch.prototype, "user", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Merch.prototype, "design_type", void 0);
+], Merch.prototype, "merchType", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Merch.prototype, "designType", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Merch.prototype, "collection", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => image_entity_1.Image, (image) => image.merchPackages, { nullable: true, onDelete: 'SET NULL' }),
-    __metadata("design:type", image_entity_1.Image)
-], Merch.prototype, "image", void 0);
+    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
+    __metadata("design:type", Date)
+], Merch.prototype, "dateCreated", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => product_entity_1.Product, (product) => product.merchPackage),
+    __metadata("design:type", Array)
+], Merch.prototype, "products", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => image_entity_1.Image, (image) => image.merchPackage),
+    __metadata("design:type", Array)
+], Merch.prototype, "images", void 0);
 exports.Merch = Merch = __decorate([
     (0, typeorm_1.Entity)('merch_packages')
 ], Merch);

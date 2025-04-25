@@ -17,12 +17,23 @@ const common_1 = require("@nestjs/common");
 const product_service_1 = require("./product.service");
 const create_product_dto_1 = require("./dto/create-product.dto");
 const update_product_dto_1 = require("./dto/update-product.dto");
+const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 let ProductController = class ProductController {
     constructor(productService) {
         this.productService = productService;
     }
     create(createProductDto) {
         return this.productService.create(createProductDto);
+    }
+    async getGoods(req) {
+        const goods = await this.productService.findAllWithImages();
+        return {
+            title: 'goods',
+            isAuthenticated: !!req.user,
+            goods,
+            extraCss: ['/css/goods-style.css'],
+            extraJsBody: ['/js/menu-activity.js'],
+        };
     }
     findAll() {
         return this.productService.findAll();
@@ -36,6 +47,12 @@ let ProductController = class ProductController {
     remove(id) {
         return this.productService.remove(+id);
     }
+    addForm(req) {
+        return {
+            title: 'Add Product',
+            isAuthenticated: true,
+        };
+    }
 };
 exports.ProductController = ProductController;
 __decorate([
@@ -46,7 +63,16 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "create", null);
 __decorate([
+    (0, common_1.Get)('goods'),
+    (0, common_1.Render)('goods-page'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "getGoods", null);
+__decorate([
     (0, common_1.Get)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
@@ -60,6 +86,7 @@ __decorate([
 ], ProductController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -68,11 +95,21 @@ __decorate([
 ], ProductController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Get)('add/form'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Render)('add-product'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], ProductController.prototype, "addForm", null);
 exports.ProductController = ProductController = __decorate([
     (0, common_1.Controller)('product'),
     __metadata("design:paramtypes", [product_service_1.ProductService])

@@ -17,61 +17,136 @@ const common_1 = require("@nestjs/common");
 const post_service_1 = require("./post.service");
 const create_post_dto_1 = require("./dto/create-post.dto");
 const update_post_dto_1 = require("./dto/update-post.dto");
+const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 let PostController = class PostController {
     constructor(postService) {
         this.postService = postService;
     }
-    create(createPostDto) {
-        return this.postService.create(createPostDto);
+    async getBlog(req) {
+        const posts = await this.postService.findAll();
+        return {
+            title: 'blog',
+            isAuthenticated: !!req.user,
+            posts: posts.map((post) => ({
+                id: post.id,
+                title: post.title,
+                date: post.dateCreated.toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                }),
+                image: post.imageUrl,
+                description: post.description,
+            })),
+            extraCss: ['/css/posts-style.css'],
+            extraJsBody: ['/js/menu-activity.js'],
+        };
     }
-    findAll() {
-        return this.postService.findAll();
+    async getPostDetail(id, req) {
+        const post = await this.postService.findOne(+id);
+        return {
+            title: post.title,
+            isAuthenticated: !!req.user,
+            post: {
+                ...post,
+                date: post.dateCreated.toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                }),
+            },
+            extraCss: ['/css/posts-style.css'],
+            extraJsBody: ['/js/menu-activity.js'],
+        };
     }
-    findOne(id) {
-        return this.postService.findOne(+id);
+    addForm(req) {
+        return {
+            title: 'Add Post',
+            isAuthenticated: true,
+        };
     }
-    update(id, updatePostDto) {
-        return this.postService.update(+id, updatePostDto);
+    async create(createPostDto) {
+        await this.postService.create(createPostDto);
     }
-    remove(id) {
-        return this.postService.remove(+id);
+    async editForm(id, req) {
+        const post = await this.postService.findOne(+id);
+        return {
+            title: 'Edit Post',
+            isAuthenticated: true,
+            post,
+        };
+    }
+    async update(id, updatePostDto) {
+        await this.postService.update(+id, updatePostDto);
+    }
+    async remove(id) {
+        await this.postService.remove(+id);
     }
 };
 exports.PostController = PostController;
 __decorate([
+    (0, common_1.Get)('blog'),
+    (0, common_1.Render)('blog-page'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], PostController.prototype, "getBlog", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    (0, common_1.Render)('post-detail'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PostController.prototype, "getPostDetail", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('add'),
+    (0, common_1.Render)('add-post'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], PostController.prototype, "addForm", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(),
+    (0, common_1.Redirect)('/post/blog'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_post_dto_1.CreatePostDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], PostController.prototype, "create", null);
 __decorate([
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], PostController.prototype, "findAll", null);
-__decorate([
-    (0, common_1.Get)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)(':id/edit'),
+    (0, common_1.Render)('edit-post'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], PostController.prototype, "findOne", null);
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PostController.prototype, "editForm", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Patch)(':id'),
+    (0, common_1.Redirect)('/post/blog'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, update_post_dto_1.UpdatePostDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], PostController.prototype, "update", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':id'),
+    (0, common_1.Redirect)('/post/blog'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], PostController.prototype, "remove", null);
 exports.PostController = PostController = __decorate([
     (0, common_1.Controller)('post'),

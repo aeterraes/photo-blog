@@ -12,14 +12,15 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const config_1 = require("@nestjs/config");
 const auth_module_1 = require("./auth/auth.module");
-const users_module_1 = require("./users/users.module");
+const user_module_1 = require("./user/user.module");
 const auth_status_middleware_1 = require("./auth/auth-status.middleware");
 const typeorm_1 = require("@nestjs/typeorm");
-const db_config_service_1 = require("./database/db-config.service");
+const db_config_service_1 = require("./db-config.service");
 const gallery_module_1 = require("./gallery/gallery.module");
 const merch_module_1 = require("./merch/merch.module");
 const product_module_1 = require("./product/product.module");
 const post_module_1 = require("./post/post.module");
+const typeorm_2 = require("typeorm");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer.apply(auth_status_middleware_1.AuthStatusMiddleware).forRoutes('*');
@@ -32,9 +33,15 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),
-            typeorm_1.TypeOrmModule.forRoot(db_config_service_1.AppDataSource.options),
+            typeorm_1.TypeOrmModule.forRootAsync({
+                useFactory: () => db_config_service_1.dataSourceOptions,
+                dataSourceFactory: async (options) => {
+                    const dataSource = new typeorm_2.DataSource(options);
+                    return dataSource.initialize();
+                },
+            }),
             auth_module_1.AuthModule,
-            users_module_1.UsersModule,
+            user_module_1.UserModule,
             gallery_module_1.GalleryModule,
             merch_module_1.MerchModule,
             product_module_1.ProductModule,

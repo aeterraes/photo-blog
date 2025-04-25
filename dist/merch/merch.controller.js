@@ -15,63 +15,171 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MerchController = void 0;
 const common_1 = require("@nestjs/common");
 const merch_service_1 = require("./merch.service");
-const create_merch_dto_1 = require("./dto/create-merch.dto");
+const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 const update_merch_dto_1 = require("./dto/update-merch.dto");
 let MerchController = class MerchController {
     constructor(merchService) {
         this.merchService = merchService;
     }
-    create(createMerchDto) {
-        return this.merchService.create(createMerchDto);
+    checkAuth(req) {
+        return !req.user;
     }
-    findAll() {
-        return this.merchService.findAll();
+    showCreateForm(req) {
+        if (this.checkAuth(req)) {
+            return { redirect: '/auth/login' };
+        }
+        return {
+            title: 'Create Merch Package',
+            isAuthenticated: true,
+            user: req.user,
+            merchTypes: ['Postcard', 'Poster', 'Pin', 'Shopper'],
+            designTypes: ['Custom', 'Classic'],
+            collections: ['New Autumn', 'Classic', 'Forest Vibes'],
+            extraCss: ['/css/merch-form-style.css'],
+            extraJsBody: ['/js/new-table.js'],
+        };
     }
-    findOne(id) {
-        return this.merchService.findOne(+id);
+    async create(body, req) {
+        const createMerchDto = {
+            merchType: body.merchTypes?.join(', ') || '',
+            designType: body.designTypes?.join(', ') || '',
+            collection: body.collections?.join(', ') || '',
+            products: [],
+            images: [],
+        };
+        await this.merchService.create(createMerchDto, req.user.id);
     }
-    update(id, updateMerchDto) {
-        return this.merchService.update(+id, updateMerchDto);
+    createdSuccess(req) {
+        if (this.checkAuth(req)) {
+            return { redirect: '/auth/login' };
+        }
+        return {
+            title: 'Merch Package Created',
+            isAuthenticated: true,
+            user: req.user,
+        };
     }
-    remove(id) {
-        return this.merchService.remove(+id);
+    async findAll(req) {
+        if (this.checkAuth(req)) {
+            return { redirect: '/auth/login' };
+        }
+        const packages = await this.merchService.findAllByUser(req.user.id);
+        return {
+            title: 'My Merch Packages',
+            isAuthenticated: true,
+            user: req.user,
+            packages,
+        };
+    }
+    async findOne(id, req) {
+        if (this.checkAuth(req)) {
+            return { redirect: '/auth/login' };
+        }
+        const merchPackage = await this.merchService.findOne(+id, req.user.id);
+        return {
+            title: 'Merch Package Details',
+            isAuthenticated: true,
+            user: req.user,
+            package: merchPackage,
+            extraCss: ['/css/merch-details-style.css'],
+        };
+    }
+    async editForm(id, req) {
+        if (this.checkAuth(req)) {
+            return { redirect: '/auth/login' };
+        }
+        const merchPackage = await this.merchService.findOne(+id, req.user.id);
+        return {
+            title: 'Edit Merch Package',
+            isAuthenticated: true,
+            user: req.user,
+            package: merchPackage,
+            merchTypes: ['Postcard', 'Poster', 'Pin', 'Shopper'],
+            designTypes: ['Custom', 'Classic'],
+            collections: ['New Autumn', 'Classic', 'Forest Vibes'],
+            extraCss: ['/css/merch-form-style.css'],
+        };
+    }
+    async update(id, updateMerchDto, req) {
+        await this.merchService.update(+id, updateMerchDto, req.user.id);
+    }
+    async remove(id, req) {
+        await this.merchService.remove(+id, req.user.id);
     }
 };
 exports.MerchController = MerchController;
 __decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Get)('create'),
+    (0, common_1.Render)('merch-form'),
+    __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_merch_dto_1.CreateMerchDto]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
+], MerchController.prototype, "showCreateForm", null);
+__decorate([
+    (0, common_1.Post)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Redirect)('/merch/created'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
 ], MerchController.prototype, "create", null);
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)('created'),
+    (0, common_1.Render)('merch-created'),
+    __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
+], MerchController.prototype, "createdSuccess", null);
+__decorate([
+    (0, common_1.Get)(),
+    (0, common_1.Render)('merch-list'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
 ], MerchController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
+    (0, common_1.Render)('merch-details'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
 ], MerchController.prototype, "findOne", null);
 __decorate([
+    (0, common_1.Get)(':id/edit'),
+    (0, common_1.Render)('merch-edit'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], MerchController.prototype, "editForm", null);
+__decorate([
     (0, common_1.Patch)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Redirect)('/merch/:id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_merch_dto_1.UpdateMerchDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, update_merch_dto_1.UpdateMerchDto, Object]),
+    __metadata("design:returntype", Promise)
 ], MerchController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Redirect)('/merch'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
 ], MerchController.prototype, "remove", null);
 exports.MerchController = MerchController = __decorate([
     (0, common_1.Controller)('merch'),

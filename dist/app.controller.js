@@ -18,9 +18,11 @@ const common_2 = require("@nestjs/common");
 const local_auth_guard_1 = require("./auth/local-auth.guard");
 const jwt_auth_guard_1 = require("./auth/jwt-auth.guard");
 const auth_service_1 = require("./auth/auth.service");
+const post_service_1 = require("./post/post.service");
 let AppController = class AppController {
-    constructor(authService) {
+    constructor(authService, postService) {
         this.authService = authService;
+        this.postService = postService;
     }
     async login(req, res) {
         const { access_token } = await this.authService.login(req.user);
@@ -30,7 +32,6 @@ let AppController = class AppController {
             httpOnly: true,
             maxAge: 3600000,
         });
-        console.log(process.env.DATABASE_URL);
         return res.redirect('/profile');
     }
     getLogin(res) {
@@ -54,119 +55,19 @@ let AppController = class AppController {
         res.clearCookie('access_token');
         return res.redirect('/home');
     }
-    getIndex(req) {
+    async getIndex(req) {
+        const recentPosts = await this.postService.findRecentPosts(4);
         return {
             title: 'home',
             description: 'Photo blog',
             keywords: 'photo, aesthetic',
             isAuthenticated: !!req.user,
-            posts: [
-                {
-                    title: 'Light phenomena',
-                    description: 'A collection of photos of halos and unusual distortions',
-                    image: '/images/first.jpeg',
-                },
-                {
-                    title: 'Exploring the story of the creation',
-                    description: 'An immense ocean, a mysterious atmosphere and a cyber sermon',
-                    image: '/images/second.jpg',
-                },
-                {
-                    title: "Autumn's colours",
-                    description: 'Autumn exudes golden light',
-                    image: '/images/third.jpeg',
-                },
-                {
-                    title: 'Strangeways, here we come',
-                    description: 'A strange cast of modern art: what is hidden in it',
-                    image: '/images/fourth.jpg',
-                },
-            ],
-            extraJsBody: ['/js/menu-activity.js'],
-        };
-    }
-    getBlog(req) {
-        return {
-            title: 'blog',
-            isAuthenticated: !!req.user,
-            posts: [
-                {
-                    title: 'The colors of autumn are getting brighter',
-                    date: 'October 8, 2024',
-                    image: '/images/gallery/autumn3.jpg',
-                    description: 'How the special atmosphere of the former royal residence changes in autumn: part two',
-                },
-                {
-                    title: 'The colors of autumn are getting brighter',
-                    date: 'October 7, 2024',
-                    image: '/images/gallery/autumn5.jpg',
-                    description: 'How the special atmosphere of the former royal residence changes in autumn: part one',
-                },
-                {
-                    title: 'Light phenomena',
-                    date: 'October 6, 2024',
-                    image: '/images/first.jpeg',
-                    description: 'A collection of photos of halos and unusual distortions',
-                },
-                {
-                    title: 'Exploring the story of the creation',
-                    date: 'October 4, 2024',
-                    image: '/images/second.jpg',
-                    description: 'An immense ocean, a mysterious atmosphere and a cyber sermon',
-                },
-                {
-                    title: "Autumn's colours",
-                    date: 'October 1, 2024',
-                    image: '/images/third.jpeg',
-                    description: 'Autumn exudes golden light',
-                },
-                {
-                    title: 'Strangeways, here we come',
-                    date: 'September 29, 2024',
-                    image: '/images/fourth.jpg',
-                    description: 'A strange cast of modern art: what is hidden in it',
-                },
-            ],
-            extraCss: ['/css/posts-style.css'],
-            extraJsBody: ['/js/menu-activity.js'],
-        };
-    }
-    getGallery(req) {
-        return {
-            title: 'gallery',
-            isAuthenticated: !!req.user,
-            images: [
-                '/images/gallery/autumn1.jpg',
-                '/images/gallery/autumn2.jpg',
-                '/images/gallery/autumn3.jpg',
-                '/images/gallery/autumn4.jpg',
-                '/images/gallery/autumn5.jpg',
-            ],
-            extraCss: ['/css/gallery-style.css'],
-            extraJsHead: [
-                'https://unpkg.com/swiper/swiper-bundle.min.js',
-                '/js/gallery.js',
-            ],
-            extraJsBody: ['/js/menu-activity.js'],
-        };
-    }
-    getGoods(req) {
-        return {
-            title: 'goods',
-            isAuthenticated: !!req.user,
-            goods: [
-                {
-                    name: 'Autumn Postcard A5',
-                    description: 'Description will be soon...',
-                    image: '/images/gallery/autumn1.jpg',
-                },
-                {
-                    name: 'Autumn Postcard A5',
-                    description: 'Description will be soon...',
-                    image: '/images/gallery/autumn2.jpg',
-                },
-            ],
-            extraCss: ['/css/goods-style.css'],
+            posts: recentPosts.map((post) => ({
+                id: post.id,
+                title: post.title,
+                description: post.description,
+                image: post.imageUrl,
+            })),
             extraJsBody: ['/js/menu-activity.js'],
         };
     }
@@ -219,32 +120,8 @@ __decorate([
     __param(0, (0, common_2.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], AppController.prototype, "getIndex", null);
-__decorate([
-    (0, common_1.Get)('blog'),
-    (0, common_1.Render)('blog-page'),
-    __param(0, (0, common_2.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], AppController.prototype, "getBlog", null);
-__decorate([
-    (0, common_1.Get)('gallery'),
-    (0, common_1.Render)('gallery-page'),
-    __param(0, (0, common_2.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], AppController.prototype, "getGallery", null);
-__decorate([
-    (0, common_1.Get)('goods'),
-    (0, common_1.Render)('goods-page'),
-    __param(0, (0, common_2.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], AppController.prototype, "getGoods", null);
 __decorate([
     (0, common_1.Get)('table'),
     (0, common_1.Render)('table-form'),
@@ -255,6 +132,7 @@ __decorate([
 ], AppController.prototype, "getTableForm", null);
 exports.AppController = AppController = __decorate([
     (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [auth_service_1.AuthService])
+    __metadata("design:paramtypes", [auth_service_1.AuthService,
+        post_service_1.PostService])
 ], AppController);
 //# sourceMappingURL=app.controller.js.map

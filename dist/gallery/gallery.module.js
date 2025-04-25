@@ -10,13 +10,17 @@ exports.GalleryModule = void 0;
 const common_1 = require("@nestjs/common");
 const gallery_service_1 = require("./gallery.service");
 const gallery_controller_1 = require("./gallery.controller");
+const typeorm_1 = require("@nestjs/typeorm");
+const image_entity_1 = require("./entities/image.entity");
 let GalleryModule = class GalleryModule {
 };
 exports.GalleryModule = GalleryModule;
 exports.GalleryModule = GalleryModule = __decorate([
     (0, common_1.Module)({
+        imports: [typeorm_1.TypeOrmModule.forFeature([image_entity_1.Image])],
         controllers: [gallery_controller_1.GalleryController],
         providers: [gallery_service_1.GalleryService],
+        exports: [gallery_service_1.GalleryService],
     })
 ], GalleryModule);
 //# sourceMappingURL=gallery.module.js.map

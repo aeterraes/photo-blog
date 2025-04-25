@@ -21,7 +21,7 @@ CREATE TABLE "merch_packages" (
 
 CREATE TABLE "products" (
   "id" SERIAL PRIMARY KEY,
-  "name" VARCHAR(255) NOT NULL,
+  "name" VARCHAR(255),
   "description" TEXT NOT NULL,
   "price" DECIMAL(10, 2) NOT NULL,
   "merch_package_id" INTEGER REFERENCES "merch_packages"("id") ON DELETE CASCADE
@@ -38,8 +38,11 @@ CREATE TABLE "posts" (
   "title" VARCHAR(255) NOT NULL,
   "description" TEXT NOT NULL,
   "imageUrl" TEXT NOT NULL,
-  "dateCreated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);`,
+  "dateCreated" TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+);
+      UPDATE "products" SET "name" = 'default_name' WHERE "name" IS NULL;
+
+      ALTER TABLE "products" ALTER COLUMN "name" SET NOT NULL;`,
     );
   }
 

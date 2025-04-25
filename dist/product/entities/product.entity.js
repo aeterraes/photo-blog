@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Product = void 0;
 const typeorm_1 = require("typeorm");
-const image_entity_1 = require("../../gallery/entities/image.entity");
+const merch_entity_1 = require("../../merch/entities/merch.entity");
 let Product = class Product {
 };
 exports.Product = Product;
@@ -24,13 +24,24 @@ __decorate([
     __metadata("design:type", String)
 ], Product.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
+    (0, typeorm_1.Column)('text'),
     __metadata("design:type", String)
 ], Product.prototype, "description", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => image_entity_1.Image, (image) => image.products, { nullable: true, onDelete: 'SET NULL' }),
-    __metadata("design:type", image_entity_1.Image)
-], Product.prototype, "image", void 0);
+    (0, typeorm_1.Column)('decimal', { precision: 10, scale: 2 }),
+    __metadata("design:type", Number)
+], Product.prototype, "price", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'merch_package_id' }),
+    __metadata("design:type", Number)
+], Product.prototype, "merchPackageId", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => merch_entity_1.Merch, (merchPackage) => merchPackage.products, {
+        onDelete: 'CASCADE',
+    }),
+    (0, typeorm_1.JoinColumn)({ name: 'merch_package_id' }),
+    __metadata("design:type", merch_entity_1.Merch)
+], Product.prototype, "merchPackage", void 0);
 exports.Product = Product = __decorate([
     (0, typeorm_1.Entity)('products')
 ], Product);
