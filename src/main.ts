@@ -19,7 +19,6 @@ async function bootstrap() {
     layout: 'layouts/main',
   });
   hbs.registerPartials(join(__dirname, '..', 'views/partials'));
-
   app.use(cookieParser());
   app.use(bodyParser.urlencoded({ extended: true }));
   await app.listen(port);
