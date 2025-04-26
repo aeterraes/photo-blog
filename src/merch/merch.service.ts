@@ -1,5 +1,4 @@
 import {
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -119,5 +118,19 @@ export class MerchService {
   async remove(id: number, userId: number): Promise<void> {
     const merch = await this.findOne(id, userId);
     await this.merchRepository.remove(merch);
+  }
+
+  async findPaginatedByUser(
+    userId: number,
+    page: number,
+    limit: number,
+  ): Promise<[Merch[], number]> {
+    return this.merchRepository.findAndCount({
+      where: { userId },
+      relations: ['products', 'images'],
+      order: { dateCreated: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
   }
 }

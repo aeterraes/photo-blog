@@ -24,7 +24,7 @@ __decorate([
     __metadata("design:type", String)
 ], Image.prototype, "url", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'merch_package_id' }),
+    (0, typeorm_1.Column)({ name: 'merch_package_id', nullable: true }),
     __metadata("design:type", Number)
 ], Image.prototype, "merchPackageId", void 0);
 __decorate([

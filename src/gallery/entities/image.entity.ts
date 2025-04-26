@@ -15,7 +15,7 @@ export class Image {
   @Column('text')
   url: string;
 
-  @Column({ name: 'merch_package_id' })
+  @Column({ name: 'merch_package_id', nullable: true })
   merchPackageId: number | null;
 
   @ManyToOne(() => Merch, (merch) => merch.images, {

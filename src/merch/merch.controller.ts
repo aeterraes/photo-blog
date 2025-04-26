@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
   Redirect,
+  Response, UnauthorizedException,
 } from '@nestjs/common';
 import { MerchService } from './merch.service';
 import { CreateMerchDto } from './dto/create-merch.dto';
@@ -19,21 +20,19 @@ import { UpdateMerchDto } from './dto/update-merch.dto';
 @Controller('merch')
 export class MerchController {
   constructor(private readonly merchService: MerchService) {}
-
-  private checkAuth(req) {
-    return !req.user;
+  private checkAuth(@Request() req) {
+    if (!req.user) {
+      throw new UnauthorizedException();
+    }
   }
 
   @Get('create')
   @Render('merch-form')
-  showCreateForm(@Request() req) {
-    if (this.checkAuth(req)) {
-      return { redirect: '/auth/login' };
-    }
-
+  showCreateForm(@Request() req, @Response() res) {
+    this.checkAuth(req);
     return {
       title: 'Create Merch Package',
-      isAuthenticated: true,
+      isAuthenticated: !!req.user,
       user: req.user,
       merchTypes: ['Postcard', 'Poster', 'Pin', 'Shopper'],
       designTypes: ['Custom', 'Classic'],
@@ -46,7 +45,7 @@ export class MerchController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @Redirect('/merch/created')
-  async create(@Body() body: any, @Request() req) {
+  async create(@Body() body: any, @Request() req, @Response() res) {
     const createMerchDto: CreateMerchDto = {
       merchType: body.merchTypes?.join(', ') || '',
       designType: body.designTypes?.join(', ') || '',
@@ -56,33 +55,30 @@ export class MerchController {
     };
 
     await this.merchService.create(createMerchDto, req.user.id);
+    return res.redirect('/merch/created');
   }
 
   @Get('created')
   @Render('merch-created')
-  createdSuccess(@Request() req) {
-    if (this.checkAuth(req)) {
-      return { redirect: '/auth/login' };
-    }
+  createdSuccess(@Request() req, @Response() res) {
+    this.checkAuth(req);
 
     return {
       title: 'Merch Package Created',
-      isAuthenticated: true,
+      isAuthenticated: !!req.user,
       user: req.user,
     };
   }
 
   @Get()
   @Render('merch-list')
-  async findAll(@Request() req) {
-    if (this.checkAuth(req)) {
-      return { redirect: '/auth/login' };
-    }
+  async findAll(@Request() req, @Response() res) {
+    this.checkAuth(req);
 
     const packages = await this.merchService.findAllByUser(req.user.id);
     return {
       title: 'My Merch Packages',
-      isAuthenticated: true,
+      isAuthenticated: !!req.user,
       user: req.user,
       packages,
     };
@@ -90,15 +86,13 @@ export class MerchController {
 
   @Get(':id')
   @Render('merch-details')
-  async findOne(@Param('id') id: string, @Request() req) {
-    if (this.checkAuth(req)) {
-      return { redirect: '/auth/login' };
-    }
+  async findOne(@Param('id') id: string, @Request() req, @Response() res) {
+    this.checkAuth(req);
 
     const merchPackage = await this.merchService.findOne(+id, req.user.id);
     return {
       title: 'Merch Package Details',
-      isAuthenticated: true,
+      isAuthenticated: !!req.user,
       user: req.user,
       package: merchPackage,
       extraCss: ['/css/merch-details-style.css'],
@@ -107,15 +101,13 @@ export class MerchController {
 
   @Get(':id/edit')
   @Render('merch-edit')
-  async editForm(@Param('id') id: string, @Request() req) {
-    if (this.checkAuth(req)) {
-      return { redirect: '/auth/login' };
-    }
+  async editForm(@Param('id') id: string, @Request() req, @Response() res) {
+    this.checkAuth(req);
 
     const merchPackage = await this.merchService.findOne(+id, req.user.id);
     return {
       title: 'Edit Merch Package',
-      isAuthenticated: true,
+      isAuthenticated: !!req.user,
       user: req.user,
       package: merchPackage,
       merchTypes: ['Postcard', 'Poster', 'Pin', 'Shopper'],
@@ -126,7 +118,6 @@ export class MerchController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
   @Redirect('/merch/:id')
   async update(
     @Param('id') id: string,
@@ -137,7 +128,6 @@ export class MerchController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   @Redirect('/merch')
   async remove(@Param('id') id: string, @Request() req) {
     await this.merchService.remove(+id, req.user.id);

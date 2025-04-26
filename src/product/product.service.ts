@@ -74,4 +74,12 @@ export class ProductService {
   async remove(id: number): Promise<void> {
     await this.productRepository.delete(id);
   }
+
+  async findPaginated(page: number, limit: number): Promise<[Product[], number]> {
+    return this.productRepository.findAndCount({
+      order: { id: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+  }
 }

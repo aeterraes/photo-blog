@@ -12,6 +12,7 @@ const user_service_1 = require("./user.service");
 const user_controller_1 = require("./user.controller");
 const user_entity_1 = require("./entities/user.entity");
 const typeorm_1 = require("@nestjs/typeorm");
+const user_api_controller_1 = require("./user-api.controller");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
@@ -20,7 +21,7 @@ exports.UserModule = UserModule = __decorate([
         imports: [typeorm_1.TypeOrmModule.forFeature([user_entity_1.User])],
         providers: [user_service_1.UserService],
         exports: [user_service_1.UserService],
-        controllers: [user_controller_1.UserController],
+        controllers: [user_controller_1.UserController, user_api_controller_1.UserApiController],
     })
 ], UserModule);
 //# sourceMappingURL=user.module.js.map

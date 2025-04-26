@@ -12,13 +12,14 @@ const gallery_service_1 = require("./gallery.service");
 const gallery_controller_1 = require("./gallery.controller");
 const typeorm_1 = require("@nestjs/typeorm");
 const image_entity_1 = require("./entities/image.entity");
+const gallery_api_controller_1 = require("./gallery-api.controller");
 let GalleryModule = class GalleryModule {
 };
 exports.GalleryModule = GalleryModule;
 exports.GalleryModule = GalleryModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([image_entity_1.Image])],
-        controllers: [gallery_controller_1.GalleryController],
+        controllers: [gallery_controller_1.GalleryController, gallery_api_controller_1.GalleryApiController],
         providers: [gallery_service_1.GalleryService],
         exports: [gallery_service_1.GalleryService],
     })

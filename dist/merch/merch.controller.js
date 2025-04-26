@@ -22,15 +22,15 @@ let MerchController = class MerchController {
         this.merchService = merchService;
     }
     checkAuth(req) {
-        return !req.user;
-    }
-    showCreateForm(req) {
-        if (this.checkAuth(req)) {
-            return { redirect: '/auth/login' };
+        if (!req.user) {
+            throw new common_1.UnauthorizedException();
         }
+    }
+    showCreateForm(req, res) {
+        this.checkAuth(req);
         return {
             title: 'Create Merch Package',
-            isAuthenticated: true,
+            isAuthenticated: !!req.user,
             user: req.user,
             merchTypes: ['Postcard', 'Poster', 'Pin', 'Shopper'],
             designTypes: ['Custom', 'Classic'],
@@ -39,7 +39,7 @@ let MerchController = class MerchController {
             extraJsBody: ['/js/new-table.js'],
         };
     }
-    async create(body, req) {
+    async create(body, req, res) {
         const createMerchDto = {
             merchType: body.merchTypes?.join(', ') || '',
             designType: body.designTypes?.join(', ') || '',
@@ -48,50 +48,43 @@ let MerchController = class MerchController {
             images: [],
         };
         await this.merchService.create(createMerchDto, req.user.id);
+        return res.redirect('/merch/created');
     }
-    createdSuccess(req) {
-        if (this.checkAuth(req)) {
-            return { redirect: '/auth/login' };
-        }
+    createdSuccess(req, res) {
+        this.checkAuth(req);
         return {
             title: 'Merch Package Created',
-            isAuthenticated: true,
+            isAuthenticated: !!req.user,
             user: req.user,
         };
     }
-    async findAll(req) {
-        if (this.checkAuth(req)) {
-            return { redirect: '/auth/login' };
-        }
+    async findAll(req, res) {
+        this.checkAuth(req);
         const packages = await this.merchService.findAllByUser(req.user.id);
         return {
             title: 'My Merch Packages',
-            isAuthenticated: true,
+            isAuthenticated: !!req.user,
             user: req.user,
             packages,
         };
     }
-    async findOne(id, req) {
-        if (this.checkAuth(req)) {
-            return { redirect: '/auth/login' };
-        }
+    async findOne(id, req, res) {
+        this.checkAuth(req);
         const merchPackage = await this.merchService.findOne(+id, req.user.id);
         return {
             title: 'Merch Package Details',
-            isAuthenticated: true,
+            isAuthenticated: !!req.user,
             user: req.user,
             package: merchPackage,
             extraCss: ['/css/merch-details-style.css'],
         };
     }
-    async editForm(id, req) {
-        if (this.checkAuth(req)) {
-            return { redirect: '/auth/login' };
-        }
+    async editForm(id, req, res) {
+        this.checkAuth(req);
         const merchPackage = await this.merchService.findOne(+id, req.user.id);
         return {
             title: 'Edit Merch Package',
-            isAuthenticated: true,
+            isAuthenticated: !!req.user,
             user: req.user,
             package: merchPackage,
             merchTypes: ['Postcard', 'Poster', 'Pin', 'Shopper'],
@@ -109,11 +102,18 @@ let MerchController = class MerchController {
 };
 exports.MerchController = MerchController;
 __decorate([
-    (0, common_1.Get)('create'),
-    (0, common_1.Render)('merch-form'),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], MerchController.prototype, "checkAuth", null);
+__decorate([
+    (0, common_1.Get)('create'),
+    (0, common_1.Render)('merch-form'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Response)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], MerchController.prototype, "showCreateForm", null);
 __decorate([
@@ -122,24 +122,27 @@ __decorate([
     (0, common_1.Redirect)('/merch/created'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Request)()),
+    __param(2, (0, common_1.Response)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object, Object, Object]),
     __metadata("design:returntype", Promise)
 ], MerchController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)('created'),
     (0, common_1.Render)('merch-created'),
     __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Response)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], MerchController.prototype, "createdSuccess", null);
 __decorate([
     (0, common_1.Get)(),
     (0, common_1.Render)('merch-list'),
     __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Response)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], MerchController.prototype, "findAll", null);
 __decorate([
@@ -147,8 +150,9 @@ __decorate([
     (0, common_1.Render)('merch-details'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Request)()),
+    __param(2, (0, common_1.Response)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], MerchController.prototype, "findOne", null);
 __decorate([
@@ -156,13 +160,13 @@ __decorate([
     (0, common_1.Render)('merch-edit'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Request)()),
+    __param(2, (0, common_1.Response)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], MerchController.prototype, "editForm", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Redirect)('/merch/:id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -173,7 +177,6 @@ __decorate([
 ], MerchController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Redirect)('/merch'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Request)()),

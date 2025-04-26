@@ -104,7 +104,6 @@ __decorate([
 ], GalleryController.prototype, "editForm", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    (0, common_1.Redirect)('/gallery'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -113,7 +112,9 @@ __decorate([
 ], GalleryController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, common_1.Post)(':id/delete'),
     (0, common_1.Redirect)('/gallery'),
+    (0, common_1.Render)('edit-gallery-image'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

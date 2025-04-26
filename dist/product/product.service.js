@@ -70,6 +70,13 @@ let ProductService = class ProductService {
     async remove(id) {
         await this.productRepository.delete(id);
     }
+    async findPaginated(page, limit) {
+        return this.productRepository.findAndCount({
+            order: { id: 'DESC' },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+    }
 };
 exports.ProductService = ProductService;
 exports.ProductService = ProductService = __decorate([

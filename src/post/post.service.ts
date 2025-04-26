@@ -51,4 +51,12 @@ export class PostService {
   async remove(id: number): Promise<void> {
     await this.postRepository.delete(id);
   }
+
+  async findPaginated(page: number, limit: number): Promise<[Post[], number]> {
+    return this.postRepository.findAndCount({
+      order: { dateCreated: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+  }
 }

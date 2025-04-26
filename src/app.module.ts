@@ -13,6 +13,7 @@ import { ProductModule } from './product/product.module';
 import { PostModule } from './post/post.module';
 import { DataSource } from 'typeorm';
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,6 +26,7 @@ import { DataSource } from 'typeorm';
         return dataSource.initialize();
       },
     }),
+
     AuthModule,
     UserModule,
     GalleryModule,

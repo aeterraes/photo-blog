@@ -16,6 +16,7 @@ const product_entity_1 = require("../product/entities/product.entity");
 const image_entity_1 = require("../gallery/entities/image.entity");
 const user_entity_1 = require("../user/entities/user.entity");
 const gallery_module_1 = require("../gallery/gallery.module");
+const merch_api_controller_1 = require("./merch-api.controller");
 let MerchModule = class MerchModule {
 };
 exports.MerchModule = MerchModule;
@@ -25,7 +26,7 @@ exports.MerchModule = MerchModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([merch_entity_1.Merch, product_entity_1.Product, image_entity_1.Image, user_entity_1.User]),
             gallery_module_1.GalleryModule,
         ],
-        controllers: [merch_controller_1.MerchController],
+        controllers: [merch_controller_1.MerchController, merch_api_controller_1.MerchApiController],
         providers: [merch_service_1.MerchService],
         exports: [merch_service_1.MerchService],
     })

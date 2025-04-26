@@ -66,6 +66,14 @@ let GalleryService = class GalleryService {
             data: { action: 'delete', image: { id: image.id } },
         });
     }
+    async findPaginated(page, limit) {
+        return await this.imageRepository.findAndCount({
+            where: { merchPackage: null },
+            select: ['id', 'url'],
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+    }
 };
 exports.GalleryService = GalleryService;
 exports.GalleryService = GalleryService = __decorate([

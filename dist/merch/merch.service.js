@@ -99,6 +99,15 @@ let MerchService = class MerchService {
         const merch = await this.findOne(id, userId);
         await this.merchRepository.remove(merch);
     }
+    async findPaginatedByUser(userId, page, limit) {
+        return this.merchRepository.findAndCount({
+            where: { userId },
+            relations: ['products', 'images'],
+            order: { dateCreated: 'DESC' },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+    }
 };
 exports.MerchService = MerchService;
 exports.MerchService = MerchService = __decorate([

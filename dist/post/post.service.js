@@ -53,6 +53,13 @@ let PostService = class PostService {
     async remove(id) {
         await this.postRepository.delete(id);
     }
+    async findPaginated(page, limit) {
+        return this.postRepository.findAndCount({
+            order: { dateCreated: 'DESC' },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+    }
 };
 exports.PostService = PostService;
 exports.PostService = PostService = __decorate([

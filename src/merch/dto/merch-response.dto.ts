@@ -1,10 +1,10 @@
-import { CreateProductDto } from '../../product/dto/create-product.dto';
-import { CreateGalleryDto } from '../../gallery/dto/create-gallery.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsArray, ValidateNested } from 'class-validator';
+import { IsArray, IsString, ValidateNested } from 'class-validator';
+import { CreateProductDto } from '../../product/dto/create-product.dto';
 import { Type } from 'class-transformer';
+import { CreateGalleryDto } from '../../gallery/dto/create-gallery.dto';
 
-export class CreateMerchDto {
+export class MerchResponseDto {
   @ApiProperty({ example: 'Poster' })
   @IsString()
   merchType: string;
@@ -13,7 +13,7 @@ export class CreateMerchDto {
   @IsString()
   designType: string;
 
-  @ApiProperty({ example: 'New Collection' })
+  @ApiProperty({ example: 'Summer 2023' })
   @IsString()
   collection: string;
 

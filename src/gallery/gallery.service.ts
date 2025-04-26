@@ -64,4 +64,13 @@ export class GalleryService {
       data: { action: 'delete', image: { id: image.id } },
     });
   }
+
+  async findPaginated(page: number, limit: number): Promise<[Image[], number]> {
+    return await this.imageRepository.findAndCount({
+      where: { merchPackage: null },
+      select: ['id', 'url'],
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+  }
 }

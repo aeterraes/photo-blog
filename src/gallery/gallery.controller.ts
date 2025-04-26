@@ -69,7 +69,6 @@ export class GalleryController {
   }
 
   @Patch(':id')
-  @Redirect('/gallery')
   async update(
     @Param('id') id: string,
     @Body() updateGalleryDto: UpdateGalleryDto,
@@ -78,7 +77,9 @@ export class GalleryController {
   }
 
   @Delete(':id')
+  @Post(':id/delete')
   @Redirect('/gallery')
+  @Render('edit-gallery-image')
   async remove(@Param('id') id: string) {
     await this.galleryService.remove(+id);
   }
