@@ -32,6 +32,8 @@ import { AuthRedirectMiddleware } from './auth/auth-status.middleware';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      playground: true,
+      introspection: true,
     }),
     CacheModule.register({
       isGlobal: true,

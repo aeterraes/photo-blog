@@ -47,6 +47,7 @@ exports.AppModule = AppModule = __decorate([
             graphql_1.GraphQLModule.forRoot({
                 driver: apollo_1.ApolloDriver,
                 autoSchemaFile: true,
+                playground: true,
             }),
             cache_manager_1.CacheModule.register({
                 isGlobal: true,
