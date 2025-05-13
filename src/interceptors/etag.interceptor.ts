@@ -15,7 +15,6 @@ export class EtagInterceptor implements NestInterceptor {
     const ctx = context.switchToHttp();
     const request = ctx.getRequest();
     const response = ctx.getResponse();
-
     return next.handle().pipe(
       map((data) => {
         if (!data || response.statusCode === HttpStatus.NO_CONTENT) {
@@ -26,7 +25,6 @@ export class EtagInterceptor implements NestInterceptor {
           .digest('hex');
         response.setHeader('ETag', etag);
         response.setHeader('Cache-Control', 'public, max-age=3600');
-
         const ifNoneMatch = request.headers['if-none-match'];
         if (ifNoneMatch && ifNoneMatch === etag) {
           response.status(HttpStatus.NOT_MODIFIED);
