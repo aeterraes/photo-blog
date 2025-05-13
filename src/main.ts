@@ -9,7 +9,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ElapsedTimeInterceptor } from './interceptors/elapsed-time.interceptor';
 import { SupertokensExceptionFilter } from './auth/auth.filter';
-import { middleware } from 'supertokens-node/lib/build/framework/express';
+import { middleware } from 'supertokens-node/framework/express';
 import supertokens from 'supertokens-node';
 
 async function bootstrap() {

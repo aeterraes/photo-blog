@@ -10,7 +10,7 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const elapsed_time_interceptor_1 = require("./interceptors/elapsed-time.interceptor");
 const auth_filter_1 = require("./auth/auth.filter");
-const express_1 = require("supertokens-node/lib/build/framework/express");
+const express_1 = require("supertokens-node/framework/express");
 const supertokens_node_1 = require("supertokens-node");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
