@@ -14,8 +14,9 @@ import {
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiExcludeController } from '@nestjs/swagger';
 
+@ApiExcludeController()
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
@@ -26,7 +27,6 @@ export class PostController {
     const posts = await this.postService.findAll();
     return {
       title: 'blog',
-      isAuthenticated: !!req.user,
       posts: posts.map((post) => ({
         id: post.id,
         title: post.title,
@@ -49,7 +49,6 @@ export class PostController {
     const post = await this.postService.findOne(+id);
     return {
       title: post.title,
-      isAuthenticated: !!req.user,
       post: {
         ...post,
         date: post.dateCreated.toLocaleDateString('en-US', {
@@ -63,43 +62,36 @@ export class PostController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('add')
   @Render('add-post')
   addForm(@Request() req) {
     return {
       title: 'Add Post',
-      isAuthenticated: true,
     };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   @Redirect('/post/blog')
   async create(@Body() createPostDto: CreatePostDto) {
     await this.postService.create(createPostDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id/edit')
   @Render('edit-post')
   async editForm(@Param('id') id: string, @Request() req) {
     const post = await this.postService.findOne(+id);
     return {
       title: 'Edit Post',
-      isAuthenticated: true,
       post,
     };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @Redirect('/post/blog')
   async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     await this.postService.update(+id, updatePostDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @Redirect('/post/blog')
   async remove(@Param('id') id: string) {

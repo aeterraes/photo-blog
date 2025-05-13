@@ -17,7 +17,7 @@ const common_1 = require("@nestjs/common");
 const post_service_1 = require("./post.service");
 const create_post_dto_1 = require("./dto/create-post.dto");
 const update_post_dto_1 = require("./dto/update-post.dto");
-const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
+const swagger_1 = require("@nestjs/swagger");
 let PostController = class PostController {
     constructor(postService) {
         this.postService = postService;
@@ -26,7 +26,6 @@ let PostController = class PostController {
         const posts = await this.postService.findAll();
         return {
             title: 'blog',
-            isAuthenticated: !!req.user,
             posts: posts.map((post) => ({
                 id: post.id,
                 title: post.title,
@@ -46,7 +45,6 @@ let PostController = class PostController {
         const post = await this.postService.findOne(+id);
         return {
             title: post.title,
-            isAuthenticated: !!req.user,
             post: {
                 ...post,
                 date: post.dateCreated.toLocaleDateString('en-US', {
@@ -62,7 +60,6 @@ let PostController = class PostController {
     addForm(req) {
         return {
             title: 'Add Post',
-            isAuthenticated: true,
         };
     }
     async create(createPostDto) {
@@ -72,7 +69,6 @@ let PostController = class PostController {
         const post = await this.postService.findOne(+id);
         return {
             title: 'Edit Post',
-            isAuthenticated: true,
             post,
         };
     }
@@ -102,7 +98,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "getPostDetail", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('add'),
     (0, common_1.Render)('add-post'),
     __param(0, (0, common_1.Request)()),
@@ -111,7 +106,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], PostController.prototype, "addForm", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(),
     (0, common_1.Redirect)('/post/blog'),
     __param(0, (0, common_1.Body)()),
@@ -120,7 +114,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "create", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':id/edit'),
     (0, common_1.Render)('edit-post'),
     __param(0, (0, common_1.Param)('id')),
@@ -130,7 +123,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "editForm", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Patch)(':id'),
     (0, common_1.Redirect)('/post/blog'),
     __param(0, (0, common_1.Param)('id')),
@@ -140,7 +132,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "update", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':id'),
     (0, common_1.Redirect)('/post/blog'),
     __param(0, (0, common_1.Param)('id')),
@@ -149,6 +140,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PostController.prototype, "remove", null);
 exports.PostController = PostController = __decorate([
+    (0, swagger_1.ApiExcludeController)(),
     (0, common_1.Controller)('post'),
     __metadata("design:paramtypes", [post_service_1.PostService])
 ], PostController);

@@ -17,6 +17,7 @@ const image_entity_1 = require("../gallery/entities/image.entity");
 const user_entity_1 = require("../user/entities/user.entity");
 const gallery_module_1 = require("../gallery/gallery.module");
 const merch_api_controller_1 = require("./merch-api.controller");
+const merch_resolver_1 = require("./merch.resolver");
 let MerchModule = class MerchModule {
 };
 exports.MerchModule = MerchModule;
@@ -27,7 +28,7 @@ exports.MerchModule = MerchModule = __decorate([
             gallery_module_1.GalleryModule,
         ],
         controllers: [merch_controller_1.MerchController, merch_api_controller_1.MerchApiController],
-        providers: [merch_service_1.MerchService],
+        providers: [merch_service_1.MerchService, merch_resolver_1.MerchResolver],
         exports: [merch_service_1.MerchService],
     })
 ], MerchModule);

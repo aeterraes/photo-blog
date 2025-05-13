@@ -11,6 +11,7 @@ import {
   Req,
   ParseIntPipe,
   DefaultValuePipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,20 +21,20 @@ import {
   ApiBody,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { MerchService } from './merch.service';
 import { CreateMerchDto } from './dto/create-merch.dto';
 import { UpdateMerchDto } from './dto/update-merch.dto';
 import { MerchResponseDto } from './dto/merch-response.dto';
+import { EtagInterceptor } from '../interceptors/etag.interceptor';
 
 @ApiTags('Merch API')
 @ApiBearerAuth()
 @Controller('api/merch')
+@UseInterceptors(new EtagInterceptor())
 export class MerchApiController {
   constructor(private readonly merchService: MerchService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create new merch package' })
   @ApiBody({ type: CreateMerchDto })
   @ApiResponse({
@@ -70,7 +71,6 @@ export class MerchApiController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get all merch packages for current user' })
   @ApiResponse({
     status: 200,
@@ -101,7 +101,6 @@ export class MerchApiController {
   }
 
   @Get('paginated')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get paginated merch packages' })
   @ApiResponse({
     status: 200,
@@ -149,7 +148,6 @@ export class MerchApiController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get merch package details' })
   @ApiResponse({
     status: 200,
@@ -185,7 +183,6 @@ export class MerchApiController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update merch package' })
   @ApiBody({ type: UpdateMerchDto })
   @ApiResponse({
@@ -211,7 +208,6 @@ export class MerchApiController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Delete merch package' })
   @ApiResponse({
     status: 204,

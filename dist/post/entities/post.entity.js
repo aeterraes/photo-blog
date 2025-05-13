@@ -11,30 +11,38 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Post = void 0;
 const typeorm_1 = require("typeorm");
+const graphql_1 = require("@nestjs/graphql");
 let Post = class Post {
 };
 exports.Post = Post;
 __decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
 ], Post.prototype, "id", void 0);
 __decorate([
+    (0, graphql_1.Field)(),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Post.prototype, "title", void 0);
 __decorate([
+    (0, graphql_1.Field)(),
     (0, typeorm_1.Column)('text'),
     __metadata("design:type", String)
 ], Post.prototype, "description", void 0);
 __decorate([
+    (0, graphql_1.Field)(),
     (0, typeorm_1.Column)('text'),
     __metadata("design:type", String)
 ], Post.prototype, "imageUrl", void 0);
 __decorate([
+    (0, graphql_1.Field)(),
     (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
     __metadata("design:type", Date)
 ], Post.prototype, "dateCreated", void 0);
 exports.Post = Post = __decorate([
+    (0, graphql_1.ObjectType)(),
+    (0, graphql_1.InputType)('PostInput'),
     (0, typeorm_1.Entity)('posts')
 ], Post);
 //# sourceMappingURL=post.entity.js.map

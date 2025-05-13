@@ -12,22 +12,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Image = void 0;
 const typeorm_1 = require("typeorm");
 const merch_entity_1 = require("../../merch/entities/merch.entity");
+const graphql_1 = require("@nestjs/graphql");
 let Image = class Image {
 };
 exports.Image = Image;
 __decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
 ], Image.prototype, "id", void 0);
 __decorate([
+    (0, graphql_1.Field)(),
     (0, typeorm_1.Column)('text'),
     __metadata("design:type", String)
 ], Image.prototype, "url", void 0);
 __decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
     (0, typeorm_1.Column)({ name: 'merch_package_id', nullable: true }),
     __metadata("design:type", Number)
 ], Image.prototype, "merchPackageId", void 0);
 __decorate([
+    (0, graphql_1.Field)(() => merch_entity_1.Merch, { nullable: true }),
     (0, typeorm_1.ManyToOne)(() => merch_entity_1.Merch, (merch) => merch.images, {
         onDelete: 'CASCADE',
     }),
@@ -35,6 +40,8 @@ __decorate([
     __metadata("design:type", merch_entity_1.Merch)
 ], Image.prototype, "merchPackage", void 0);
 exports.Image = Image = __decorate([
+    (0, graphql_1.ObjectType)(),
+    (0, graphql_1.InputType)('ImageInput'),
     (0, typeorm_1.Entity)('images')
 ], Image);
 //# sourceMappingURL=image.entity.js.map

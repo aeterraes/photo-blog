@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { GalleryService } from '../gallery/gallery.service';
+import { ProductWithImage } from './dto/product-with-image.dto';
 
 @Injectable()
 export class ProductService {
@@ -36,10 +37,10 @@ export class ProductService {
     return product;
   }
 
-  async findAllWithImages() {
+  async findAllWithImages(): Promise<ProductWithImage[]> {
     const products = await this.productRepository.find();
 
-    const goods = await Promise.all(
+    return Promise.all(
       products.map(async (product) => {
         try {
           const image = await this.galleryService.findOne(product.id);
@@ -48,19 +49,15 @@ export class ProductService {
             description: product.description,
             image: image.url,
           };
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (error) {
-          console.warn(`Image not found for product ${product.id}`);
+        } catch {
           return {
             name: product.name,
             description: product.description,
-            image: '/images/default.jpg',
+            image: '/images/subscribe.jpg',
           };
         }
       }),
     );
-
-    return goods;
   }
 
   async update(
@@ -75,7 +72,10 @@ export class ProductService {
     await this.productRepository.delete(id);
   }
 
-  async findPaginated(page: number, limit: number): Promise<[Product[], number]> {
+  async findPaginated(
+    page: number,
+    limit: number,
+  ): Promise<[Product[], number]> {
     return this.productRepository.findAndCount({
       order: { id: 'DESC' },
       skip: (page - 1) * limit,

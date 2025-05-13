@@ -6,32 +6,32 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthStatusMiddleware = void 0;
+exports.AuthRedirectMiddleware = void 0;
+const session_1 = require("supertokens-node/recipe/session");
 const common_1 = require("@nestjs/common");
-const jwt = require("jsonwebtoken");
-const constants_1 = require("./constants");
-let AuthStatusMiddleware = class AuthStatusMiddleware {
-    use(req, res, next) {
-        const token = req.cookies['access_token'];
-        if (token) {
-            try {
-                const decoded = jwt.verify(token, constants_1.jwtConstants.secret);
-                req.user = decoded;
+let AuthRedirectMiddleware = class AuthRedirectMiddleware {
+    async use(req, res, next) {
+        try {
+            const session = await (0, session_1.getSession)(req, res, { sessionRequired: false });
+            if (session) {
+                const accessTokenPayload = session.getAccessTokenPayload();
+                res.locals.user = {
+                    id: accessTokenPayload.id,
+                    email: accessTokenPayload.email,
+                };
             }
-            catch (err) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                req.user = null;
+            else {
+                res.locals.user = null;
             }
         }
-        else {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            req.user = null;
+        catch (error) {
+            res.locals.user = null;
         }
         next();
     }
 };
-exports.AuthStatusMiddleware = AuthStatusMiddleware;
-exports.AuthStatusMiddleware = AuthStatusMiddleware = __decorate([
+exports.AuthRedirectMiddleware = AuthRedirectMiddleware;
+exports.AuthRedirectMiddleware = AuthRedirectMiddleware = __decorate([
     (0, common_1.Injectable)()
-], AuthStatusMiddleware);
+], AuthRedirectMiddleware);
 //# sourceMappingURL=auth-status.middleware.js.map

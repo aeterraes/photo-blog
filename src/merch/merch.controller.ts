@@ -7,32 +7,35 @@ import {
   Param,
   Delete,
   Render,
-  UseGuards,
   Request,
   Redirect,
-  Response, UnauthorizedException,
+  Response,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { MerchService } from './merch.service';
 import { CreateMerchDto } from './dto/create-merch.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UpdateMerchDto } from './dto/update-merch.dto';
+import { ApiExcludeController } from '@nestjs/swagger';
 
+@ApiExcludeController()
 @Controller('merch')
 export class MerchController {
   constructor(private readonly merchService: MerchService) {}
+  /*
   private checkAuth(@Request() req) {
     if (!req.user) {
       throw new UnauthorizedException();
     }
   }
 
+
+   */
+
   @Get('create')
   @Render('merch-form')
   showCreateForm(@Request() req, @Response() res) {
-    this.checkAuth(req);
     return {
       title: 'Create Merch Package',
-      isAuthenticated: !!req.user,
       user: req.user,
       merchTypes: ['Postcard', 'Poster', 'Pin', 'Shopper'],
       designTypes: ['Custom', 'Classic'],
@@ -43,7 +46,6 @@ export class MerchController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   @Redirect('/merch/created')
   async create(@Body() body: any, @Request() req, @Response() res) {
     const createMerchDto: CreateMerchDto = {
@@ -61,11 +63,8 @@ export class MerchController {
   @Get('created')
   @Render('merch-created')
   createdSuccess(@Request() req, @Response() res) {
-    this.checkAuth(req);
-
     return {
       title: 'Merch Package Created',
-      isAuthenticated: !!req.user,
       user: req.user,
     };
   }
@@ -73,12 +72,10 @@ export class MerchController {
   @Get()
   @Render('merch-list')
   async findAll(@Request() req, @Response() res) {
-    this.checkAuth(req);
-
     const packages = await this.merchService.findAllByUser(req.user.id);
     return {
       title: 'My Merch Packages',
-      isAuthenticated: !!req.user,
+
       user: req.user,
       packages,
     };
@@ -87,12 +84,10 @@ export class MerchController {
   @Get(':id')
   @Render('merch-details')
   async findOne(@Param('id') id: string, @Request() req, @Response() res) {
-    this.checkAuth(req);
-
     const merchPackage = await this.merchService.findOne(+id, req.user.id);
     return {
       title: 'Merch Package Details',
-      isAuthenticated: !!req.user,
+
       user: req.user,
       package: merchPackage,
       extraCss: ['/css/merch-details-style.css'],
@@ -102,12 +97,10 @@ export class MerchController {
   @Get(':id/edit')
   @Render('merch-edit')
   async editForm(@Param('id') id: string, @Request() req, @Response() res) {
-    this.checkAuth(req);
-
     const merchPackage = await this.merchService.findOne(+id, req.user.id);
     return {
       title: 'Edit Merch Package',
-      isAuthenticated: !!req.user,
+
       user: req.user,
       package: merchPackage,
       merchTypes: ['Postcard', 'Poster', 'Pin', 'Shopper'],

@@ -5,11 +5,11 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
   Query,
   ParseIntPipe,
   DefaultValuePipe,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,21 +17,21 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { PostService } from './post.service';
 import { Post as PostEntity } from './entities/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostResponseDto } from './dto/post-response.dto';
+import { EtagInterceptor } from '../interceptors/etag.interceptor';
 
 @ApiTags('Posts API')
 @ApiBearerAuth()
 @Controller('api/posts')
+@UseInterceptors(new EtagInterceptor())
 export class PostApiController {
   constructor(private readonly postService: PostService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create new post' })
   @ApiResponse({
     status: 201,
@@ -133,7 +133,6 @@ export class PostApiController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update post' })
   @ApiResponse({
     status: 200,
@@ -152,7 +151,6 @@ export class PostApiController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Delete post' })
   @ApiResponse({ status: 204, description: 'Post deleted' })
   async remove(@Param('id', ParseIntPipe) id: number) {

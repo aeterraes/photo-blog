@@ -12,30 +12,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Product = void 0;
 const typeorm_1 = require("typeorm");
 const merch_entity_1 = require("../../merch/entities/merch.entity");
+const graphql_1 = require("@nestjs/graphql");
 let Product = class Product {
 };
 exports.Product = Product;
 __decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
 ], Product.prototype, "id", void 0);
 __decorate([
+    (0, graphql_1.Field)(),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Product.prototype, "name", void 0);
 __decorate([
+    (0, graphql_1.Field)(),
     (0, typeorm_1.Column)('text'),
     __metadata("design:type", String)
 ], Product.prototype, "description", void 0);
 __decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float),
     (0, typeorm_1.Column)('decimal', { precision: 10, scale: 2 }),
     __metadata("design:type", Number)
 ], Product.prototype, "price", void 0);
 __decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
     (0, typeorm_1.Column)({ name: 'merch_package_id' }),
     __metadata("design:type", Number)
 ], Product.prototype, "merchPackageId", void 0);
 __decorate([
+    (0, graphql_1.Field)(() => merch_entity_1.Merch),
     (0, typeorm_1.ManyToOne)(() => merch_entity_1.Merch, (merchPackage) => merchPackage.products, {
         onDelete: 'CASCADE',
     }),
@@ -43,6 +50,8 @@ __decorate([
     __metadata("design:type", merch_entity_1.Merch)
 ], Product.prototype, "merchPackage", void 0);
 exports.Product = Product = __decorate([
+    (0, graphql_1.ObjectType)(),
+    (0, graphql_1.InputType)('ProductInput'),
     (0, typeorm_1.Entity)('products')
 ], Product);
 //# sourceMappingURL=product.entity.js.map

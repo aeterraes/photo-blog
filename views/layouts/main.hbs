@@ -21,14 +21,19 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </head>
 <body>
+{{log this}}
 <header>
   <h1><strong>libre lente</strong></h1>
-  {{#if isAuthenticated}}
-    <form action="/auth/logout" method="post" style="display:inline;">
-      <button type="submit">Logout</button>
-    </form>
+  {{#if user}}
+    <div class="user-info">
+      <form action="/logout" method="post" style="display:inline;">
+        <button type="submit">Logout</button>
+      </form>
+    </div>
   {{else}}
-    <a href="/auth/login">Login</a>
+    <div class="auth-links">
+      <a href="/login">Login</a>
+    </div>
   {{/if}}
 </header>
 {{> navigation}}

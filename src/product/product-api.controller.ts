@@ -10,6 +10,7 @@ import {
   Query,
   ParseIntPipe,
   DefaultValuePipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,21 +18,21 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductResponseDto } from './dto/product-response.dto';
 import { Product } from './entities/product.entity';
+import { EtagInterceptor } from '../interceptors/etag.interceptor';
 
 @ApiTags('Products API')
 @ApiBearerAuth()
 @Controller('api/products')
+@UseInterceptors(new EtagInterceptor())
 export class ProductApiController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create new product' })
   @ApiResponse({
     status: 201,
@@ -119,7 +120,6 @@ export class ProductApiController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update product' })
   @ApiResponse({
     status: 200,
@@ -138,7 +138,6 @@ export class ProductApiController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Delete product' })
   @ApiResponse({ status: 204, description: 'Product deleted' })
   async remove(@Param('id', ParseIntPipe) id: number) {

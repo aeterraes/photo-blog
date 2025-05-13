@@ -8,14 +8,14 @@ import {
   Delete,
   Render,
   Request,
-  UseGuards,
   Req,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiExcludeController } from '@nestjs/swagger';
 
+@ApiExcludeController()
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -39,7 +39,6 @@ export class ProductController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   findAll() {
     return this.productService.findAll();
   }
@@ -50,24 +49,20 @@ export class ProductController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(+id, updateProductDto);
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.productService.remove(+id);
   }
 
   @Get('add/form')
-  @UseGuards(JwtAuthGuard)
   @Render('add-product')
   addForm(@Req() req) {
     return {
       title: 'Add Product',
-      isAuthenticated: true,
     };
   }
 }

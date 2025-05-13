@@ -17,7 +17,7 @@ const common_1 = require("@nestjs/common");
 const product_service_1 = require("./product.service");
 const create_product_dto_1 = require("./dto/create-product.dto");
 const update_product_dto_1 = require("./dto/update-product.dto");
-const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
+const swagger_1 = require("@nestjs/swagger");
 let ProductController = class ProductController {
     constructor(productService) {
         this.productService = productService;
@@ -50,7 +50,6 @@ let ProductController = class ProductController {
     addForm(req) {
         return {
             title: 'Add Product',
-            isAuthenticated: true,
         };
     }
 };
@@ -72,7 +71,6 @@ __decorate([
 ], ProductController.prototype, "getGoods", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
@@ -86,7 +84,6 @@ __decorate([
 ], ProductController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -95,7 +92,6 @@ __decorate([
 ], ProductController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -103,7 +99,6 @@ __decorate([
 ], ProductController.prototype, "remove", null);
 __decorate([
     (0, common_1.Get)('add/form'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Render)('add-product'),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -111,6 +106,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "addForm", null);
 exports.ProductController = ProductController = __decorate([
+    (0, swagger_1.ApiExcludeController)(),
     (0, common_1.Controller)('product'),
     __metadata("design:paramtypes", [product_service_1.ProductService])
 ], ProductController);

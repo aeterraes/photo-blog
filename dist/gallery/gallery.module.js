@@ -13,6 +13,8 @@ const gallery_controller_1 = require("./gallery.controller");
 const typeorm_1 = require("@nestjs/typeorm");
 const image_entity_1 = require("./entities/image.entity");
 const gallery_api_controller_1 = require("./gallery-api.controller");
+const gallery_resolver_1 = require("./gallery.resolver");
+const file_manager_service_1 = require("../file/file-manager.service");
 let GalleryModule = class GalleryModule {
 };
 exports.GalleryModule = GalleryModule;
@@ -20,7 +22,7 @@ exports.GalleryModule = GalleryModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([image_entity_1.Image])],
         controllers: [gallery_controller_1.GalleryController, gallery_api_controller_1.GalleryApiController],
-        providers: [gallery_service_1.GalleryService],
+        providers: [gallery_service_1.GalleryService, gallery_resolver_1.GalleryResolver, file_manager_service_1.FileManagerService],
         exports: [gallery_service_1.GalleryService],
     })
 ], GalleryModule);

@@ -42,7 +42,7 @@ let ProductService = class ProductService {
     }
     async findAllWithImages() {
         const products = await this.productRepository.find();
-        const goods = await Promise.all(products.map(async (product) => {
+        return Promise.all(products.map(async (product) => {
             try {
                 const image = await this.galleryService.findOne(product.id);
                 return {
@@ -50,18 +50,15 @@ let ProductService = class ProductService {
                     description: product.description,
                     image: image.url,
                 };
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
             }
-            catch (error) {
-                console.warn(`Image not found for product ${product.id}`);
+            catch {
                 return {
                     name: product.name,
                     description: product.description,
-                    image: '/images/default.jpg',
+                    image: '/images/subscribe.jpg',
                 };
             }
         }));
-        return goods;
     }
     async update(id, updateProductDto) {
         await this.productRepository.update(id, updateProductDto);

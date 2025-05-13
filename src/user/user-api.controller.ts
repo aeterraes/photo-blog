@@ -6,8 +6,8 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
   ParseIntPipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,16 +15,17 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { User } from './entities/user.entity';
+import { EtagInterceptor } from '../interceptors/etag.interceptor';
 
 @ApiTags('Users API')
 @ApiBearerAuth()
 @Controller('api/users')
+@UseInterceptors(new EtagInterceptor())
 export class UserApiController {
   constructor(private readonly userService: UserService) {}
 
@@ -44,7 +45,6 @@ export class UserApiController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({
     status: 200,
@@ -60,7 +60,6 @@ export class UserApiController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get user details by ID' })
   @ApiResponse({
     status: 200,
@@ -77,7 +76,6 @@ export class UserApiController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update user' })
   @ApiResponse({
     status: 200,
@@ -96,7 +94,6 @@ export class UserApiController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Delete user' })
   @ApiResponse({
     status: 204,

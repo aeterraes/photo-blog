@@ -1,23 +1,24 @@
+import { SessionRequest } from 'supertokens-node/framework/express';
+import { Response, NextFunction } from 'express';
+import { getSession } from 'supertokens-node/recipe/session';
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import * as jwt from 'jsonwebtoken';
-import { jwtConstants } from './constants';
 
 @Injectable()
-export class AuthStatusMiddleware implements NestMiddleware {
-  use(req: Request, res: Response, next: NextFunction) {
-    const token = req.cookies['access_token'];
-    if (token) {
-      try {
-        const decoded = jwt.verify(token, jwtConstants.secret);
-        req.user = decoded;
-      } catch (err) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        req.user = null;
+export class AuthRedirectMiddleware implements NestMiddleware {
+  async use(req: Request, res: Response, next: NextFunction) {
+    try {
+      const session = await getSession(req, res, { sessionRequired: false });
+      if (session) {
+        const accessTokenPayload = session.getAccessTokenPayload();
+        res.locals.user = {
+          id: accessTokenPayload.id,
+          email: accessTokenPayload.email,
+        };
+      } else {
+        res.locals.user = null;
       }
-    } else {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      req.user = null;
+    } catch (error) {
+      res.locals.user = null;
     }
     next();
   }

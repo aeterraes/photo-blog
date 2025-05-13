@@ -15,22 +15,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MerchController = void 0;
 const common_1 = require("@nestjs/common");
 const merch_service_1 = require("./merch.service");
-const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 const update_merch_dto_1 = require("./dto/update-merch.dto");
+const swagger_1 = require("@nestjs/swagger");
 let MerchController = class MerchController {
     constructor(merchService) {
         this.merchService = merchService;
     }
-    checkAuth(req) {
-        if (!req.user) {
-            throw new common_1.UnauthorizedException();
-        }
+    /*
+    private checkAuth(@Request() req) {
+      if (!req.user) {
+        throw new UnauthorizedException();
+      }
     }
+  
+  
+     */
     showCreateForm(req, res) {
-        this.checkAuth(req);
         return {
             title: 'Create Merch Package',
-            isAuthenticated: !!req.user,
             user: req.user,
             merchTypes: ['Postcard', 'Poster', 'Pin', 'Shopper'],
             designTypes: ['Custom', 'Classic'],
@@ -51,40 +53,32 @@ let MerchController = class MerchController {
         return res.redirect('/merch/created');
     }
     createdSuccess(req, res) {
-        this.checkAuth(req);
         return {
             title: 'Merch Package Created',
-            isAuthenticated: !!req.user,
             user: req.user,
         };
     }
     async findAll(req, res) {
-        this.checkAuth(req);
         const packages = await this.merchService.findAllByUser(req.user.id);
         return {
             title: 'My Merch Packages',
-            isAuthenticated: !!req.user,
             user: req.user,
             packages,
         };
     }
     async findOne(id, req, res) {
-        this.checkAuth(req);
         const merchPackage = await this.merchService.findOne(+id, req.user.id);
         return {
             title: 'Merch Package Details',
-            isAuthenticated: !!req.user,
             user: req.user,
             package: merchPackage,
             extraCss: ['/css/merch-details-style.css'],
         };
     }
     async editForm(id, req, res) {
-        this.checkAuth(req);
         const merchPackage = await this.merchService.findOne(+id, req.user.id);
         return {
             title: 'Edit Merch Package',
-            isAuthenticated: !!req.user,
             user: req.user,
             package: merchPackage,
             merchTypes: ['Postcard', 'Poster', 'Pin', 'Shopper'],
@@ -102,12 +96,6 @@ let MerchController = class MerchController {
 };
 exports.MerchController = MerchController;
 __decorate([
-    __param(0, (0, common_1.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], MerchController.prototype, "checkAuth", null);
-__decorate([
     (0, common_1.Get)('create'),
     (0, common_1.Render)('merch-form'),
     __param(0, (0, common_1.Request)()),
@@ -118,7 +106,6 @@ __decorate([
 ], MerchController.prototype, "showCreateForm", null);
 __decorate([
     (0, common_1.Post)(),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Redirect)('/merch/created'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Request)()),
@@ -185,6 +172,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], MerchController.prototype, "remove", null);
 exports.MerchController = MerchController = __decorate([
+    (0, swagger_1.ApiExcludeController)(),
     (0, common_1.Controller)('merch'),
     __metadata("design:paramtypes", [merch_service_1.MerchService])
 ], MerchController);

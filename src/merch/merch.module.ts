@@ -8,6 +8,7 @@ import { Image } from '../gallery/entities/image.entity';
 import { User } from '../user/entities/user.entity';
 import { GalleryModule } from '../gallery/gallery.module';
 import { MerchApiController } from './merch-api.controller';
+import { MerchResolver } from './merch.resolver';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { MerchApiController } from './merch-api.controller';
     GalleryModule,
   ],
   controllers: [MerchController, MerchApiController],
-  providers: [MerchService],
+  providers: [MerchService, MerchResolver],
   exports: [MerchService],
 })
 export class MerchModule {}

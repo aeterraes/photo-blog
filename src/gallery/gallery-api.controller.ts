@@ -11,6 +11,7 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   HttpStatus,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiQuery, ApiBody } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
@@ -18,9 +19,11 @@ import { MessageEvent } from '@nestjs/common';
 import { GalleryService } from './gallery.service';
 import { CreateGalleryDto } from './dto/create-gallery.dto';
 import { UpdateGalleryDto } from './dto/update-gallery.dto';
+import { EtagInterceptor } from '../interceptors/etag.interceptor';
 
 @ApiTags('Gallery API')
 @Controller('api/gallery')
+@UseInterceptors(new EtagInterceptor())
 export class GalleryApiController {
   constructor(private readonly galleryService: GalleryService) {}
 

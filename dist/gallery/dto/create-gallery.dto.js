@@ -17,8 +17,7 @@ class CreateGalleryDto {
 exports.CreateGalleryDto = CreateGalleryDto;
 __decorate([
     (0, swagger_1.ApiProperty)({ example: 'https://example.com/image.jpg' }),
-    (0, class_validator_1.IsUrl)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateGalleryDto.prototype, "url", void 0);
 //# sourceMappingURL=create-gallery.dto.js.map

@@ -1,63 +1,95 @@
-import { Controller, Get, Post, Render, Res, UseGuards } from '@nestjs/common';
-import { Request } from '@nestjs/common';
-import { LocalAuthGuard } from './auth/local-auth.guard';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { AuthService } from './auth/auth.service';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Render,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { PostService } from './post/post.service';
+import { UserService } from './user/user.service';
+import { Request, Response } from 'express';
+import Session, { getSession } from 'supertokens-node/recipe/session';
+import EmailPassword from 'supertokens-node/recipe/emailpassword';
+import { SessionRequest } from 'supertokens-node/framework/express';
+import SuperTokens from 'supertokens-node';
 
 @Controller()
 export class AppController {
   constructor(
-    private authService: AuthService,
     private postService: PostService,
+    private userService: UserService,
   ) {}
 
-  @UseGuards(LocalAuthGuard)
-  @Post('auth/login')
-  async login(@Request() req, @Res() res) {
-    const { access_token } = await this.authService.login(req.user);
-    console.log(req.user);
-    console.log(access_token);
-    res.cookie('access_token', access_token, {
-      httpOnly: true,
-      maxAge: 3600000,
-    });
-    return res.redirect('/profile');
+  @Post('login')
+  async login(
+    @Body() body: { email: string; password: string },
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    try {
+      const { email, password } = body;
+      const user = await this.userService.findOneByEmail(email);
+      if (!user) {
+        return res.status(HttpStatus.UNAUTHORIZED);
+      }
+      const response = await EmailPassword.signIn('', email, password);
+      if (response.status === 'WRONG_CREDENTIALS_ERROR') {
+        return res.status(HttpStatus.UNAUTHORIZED);
+      }
+      const recipeUserId = SuperTokens.convertToRecipeUserId(response.user.id);
+      await Session.createNewSession(
+        req,
+        res,
+        '',
+        recipeUserId,
+        { id: user.id, email: user.email },
+        { userData: { id: user.id, email: user.email } },
+        {},
+      );
+      return res.redirect('/profile');
+    } catch (error) {
+      console.error('err:', error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  @Get('auth/login')
+  @Get('login')
   @Render('login')
-  getLogin(@Res() res) {
-    return {
-      title: 'Login',
-      description: 'Login',
-      extraJsBody: ['/js/menu-activity.js'],
-    };
+  getLogin() {
+    return {};
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logout(@Req() req: SessionRequest, @Res() res: Response) {
+    try {
+      const session = await getSession(req, res);
+      await session.revokeSession();
+      return res.status(200);
+    } catch (err) {}
+  }
+
   @Get('profile')
   @Render('profile')
-  getProfile(@Request() req) {
-    return {
-      title: 'Profile',
-      description: 'User profile page',
-      keywords: 'user, profile',
-      isAuthenticated: !!req.user,
-      user: req.user,
-      extraJsBody: ['/js/menu-activity.js'],
-    };
+  async getProfile(@Req() req: Request, @Res() res: Response) {
+    try {
+      const session = await getSession(req, res);
+      const accessTokenPayload = session.getAccessTokenPayload();
+      const user = await this.userService.findOneByEmail(
+        accessTokenPayload.email,
+      );
+      return { user };
+    } catch (error) {
+      console.error('err', error);
+      return res.status(401);
+    }
   }
 
-  @Post('auth/logout')
-  logout(@Res() res) {
-    res.clearCookie('access_token');
-    return res.redirect('/home');
-  }
-
-  @Get('home')
+  @Get()
   @Render('index')
-  async getIndex(@Request() req) {
+  async getIndex(@Req() req) {
     const recentPosts = await this.postService.findRecentPosts(4);
     return {
       title: 'home',
@@ -76,7 +108,7 @@ export class AppController {
 
   @Get('table')
   @Render('table-form')
-  getTableForm(@Request() req) {
+  getTableForm(@Req() req) {
     return {
       title: 'table-form',
       isAuthenticated: !!req.user,

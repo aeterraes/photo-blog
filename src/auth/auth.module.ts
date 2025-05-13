@@ -1,22 +1,28 @@
-import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LocalStrategy } from './local.strategy';
-import { JwtStrategy } from './jwt.strategy';
+import { Module, DynamicModule } from '@nestjs/common';
+import { SupertokensService } from './supertokens.service';
+import { ConfigInjectionToken, AuthModuleConfig } from './config.interface';
 import { UserModule } from '../user/user.module';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 
 @Module({
-  imports: [
-    UserModule,
-    PassportModule,
-    JwtModule.register({
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
-    }),
-  ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService],
+  providers: [SupertokensService],
+  exports: [],
+  imports: [UserModule],
+  controllers: [],
 })
-export class AuthModule {}
+export class AuthModule {
+  static forRoot(config: AuthModuleConfig): DynamicModule {
+    return {
+      module: AuthModule,
+      imports: [UserModule],
+      providers: [
+        {
+          provide: ConfigInjectionToken,
+          useValue: config,
+        },
+        SupertokensService,
+      ],
+      exports: [SupertokensService],
+      controllers: [],
+    };
+  }
+}

@@ -7,9 +7,22 @@ import * as hbs from 'hbs';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ElapsedTimeInterceptor } from './interceptors/elapsed-time.interceptor';
+import { SupertokensExceptionFilter } from './auth/auth.filter';
+import { middleware } from 'supertokens-node/lib/build/framework/express';
+import supertokens from 'supertokens-node';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.useGlobalInterceptors(new ElapsedTimeInterceptor());
+  app.useGlobalFilters(new SupertokensExceptionFilter());
+  app.use(cookieParser());
+  app.enableCors({
+    origin: process.env.SUPERTOKENS_WEBSITE_DOMAIN || 'http://localhost:3001',
+    credentials: true,
+    allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
+  });
 
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') ?? 3001;
@@ -39,8 +52,7 @@ async function bootstrap() {
   });
   hbs.registerPartials(join(__dirname, '..', 'views/partials'));
 
-  app.use(cookieParser());
-
+  app.use(middleware());
   await app.listen(port);
 }
 bootstrap();
