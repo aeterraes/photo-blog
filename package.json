@@ -57,7 +57,7 @@
       "pg-connection-string": "^2.8.5",
       "reflect-metadata": "^0.2.2",
       "supertokens-nestjs": "^0.0.3",
-      "supertokens-node": "^16.7.6",
+      "supertokens-node": "^21.1.0",
       "swagger-ui-express": "^5.0.1",
       "typeorm": "0.3.22"
    },
