@@ -1,0 +1,185 @@
+<div class="form-container">
+  <h2 class="merch-header">Edit Merchandise Package</h2>
+  <form id="merchForm" action="/merch/{{package.id}}" method="post">
+    <input type="hidden" name="_method" value="patch">
+
+    <div class="form-group">
+      <label>Merch Type:</label>
+      <div class="checkbox-group">
+        {{#each merchTypes}}
+          <input
+            type="checkbox"
+            id="merch-{{this}}"
+            name="merchTypes"
+            value="{{this}}"
+            {{#if (includes package.merchType this)}}checked{{/if}}>
+          <label for="merch-{{this}}">{{this}}</label>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Design Type:</label>
+      <div class="checkbox-group">
+        {{#each designTypes}}
+          <input
+            type="checkbox"
+            id="design-{{this}}"
+            name="designTypes"
+            value="{{this}}"
+            {{#if (includes package.designType this)}}checked{{/if}}>
+          <label for="design-{{this}}">{{this}}</label>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Collection:</label>
+      <div class="checkbox-group">
+        {{#each collections}}
+          <input
+            type="checkbox"
+            id="collection-{{this}}"
+            name="collections"
+            value="{{this}}"
+            {{#if (includes package.collection this)}}checked{{/if}}>
+          <label for="collection-{{this}}">{{this}}</label>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Products:</label>
+      <div class="products-preview">
+        {{#each package.products}}
+          <div class="product-preview">
+            <img src="{{this.imageUrl}}" alt="{{this.name}}" width="50">
+            <span>{{this.name}} - ${{this.price}}</span>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="submit-button">Update Package</button>
+      <a href="/merch/{{package.id}}" class="cancel-button">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<style>
+  .form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .merch-header {
+    color: #7D8637;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    margin-right: 5px;
+  }
+
+  .products-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    background: white;
+    border-radius: 4px;
+  }
+
+  .product-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+  }
+
+  .submit-button {
+    background-color: #7D8637;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Lora', serif;
+  }
+
+  .cancel-button {
+    color: #7D8637;
+    padding: 10px 20px;
+    border: 1px solid #7D8637;
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: 'Lora', serif;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('merchForm');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = {
+        merchTypes: [],
+        designTypes: [],
+        collections: []
+      };
+
+      formData.getAll('merchTypes').forEach(value => data.merchTypes.push(value));
+      formData.getAll('designTypes').forEach(value => data.designTypes.push(value));
+      formData.getAll('collections').forEach(value => data.collections.push(value));
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            merchType: data.merchTypes.join(', '),
+            designType: data.designTypes.join(', '),
+            collection: data.collections.join(', ')
+          })
+        });
+
+        if (response.ok) {
+          window.location.href = form.action.replace('/edit', '');
+        } else {
+          console.error('Error:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  });
+</script>

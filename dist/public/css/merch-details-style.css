@@ -1,0 +1,180 @@
+.merch-details-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.merch-details-container h1 {
+    color: #7D8637;
+    font-family: 'Alegreya Sans', sans-serif;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.package-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.package-meta p {
+    margin: 0.8rem 0;
+    font-family: 'Lora', serif;
+    color: #555;
+}
+
+.meta-label {
+    font-weight: 600;
+    color: #333;
+    display: inline-block;
+    min-width: 100px;
+}
+
+.package-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.action-btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    font-family: 'Lora', serif;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.edit-btn {
+    background-color: #7D8637;
+    color: white;
+    border: none;
+}
+
+.edit-btn:hover {
+    background-color: #6a7230;
+}
+
+.delete-btn {
+    background-color: #f8f8f8;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+}
+
+.delete-btn:hover {
+    background-color: #f1f1f1;
+}
+
+/* Секция продуктов */
+.products-section h2 {
+    color: #7D8637;
+    font-family: 'Alegreya Sans', sans-serif;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.product-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.product-info {
+    padding: 1.2rem;
+}
+
+.product-info h3 {
+    color: #333;
+    font-family: 'Alegreya Sans', sans-serif;
+    margin-bottom: 0.5rem;
+}
+
+.product-description {
+    color: #666;
+    font-family: 'Lora', serif;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+}
+
+.product-price {
+    color: #7D8637;
+    font-weight: 600;
+    font-family: 'Lora', serif;
+}
+
+.back-link {
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.back-link a {
+    color: #7D8637;
+    font-family: 'Lora', serif;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.back-link a:hover {
+    color: #6a7230;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .package-header {
+        flex-direction: column;
+    }
+
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .merch-details-container {
+        padding: 1rem;
+    }
+}
+
+.images-section {
+    margin: 2rem 0;
+}
+
+.images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.image-card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.merch-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}

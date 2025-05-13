@@ -1,0 +1,15 @@
+<div class="merch-list">
+  <h1>{{title}}</h1>
+
+  <div class="packages-grid">
+    {{#each packages}}
+      <div class="package-card">
+        <h3>{{merchType}}</h3>
+        <p><strong>Design:</strong> {{designType}}</p>
+        <p><strong>Collection:</strong> {{collection}}</p>
+        <p><strong>Created:</strong> {{dateCreated}}</p>
+        <a href="/merch/{{id}}" class="view-button">View Details</a>
+      </div>
+    {{/each}}
+  </div>
+</div>

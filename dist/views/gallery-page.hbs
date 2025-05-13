@@ -1,0 +1,46 @@
+<head>
+  <meta charset="UTF-8" />
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/css/gallery-style.css">
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+</head>
+
+<body>
+<div class="swiper" id="gallery">
+  <div class="swiper-wrapper" id="gallery-wrapper">
+    {{#each images}}
+      <div class="swiper-slide" data-id="{{@index}}">
+        <img src="{{this}}" class="gallery-image" alt="Gallery image">
+      </div>
+    {{/each}}
+  </div>
+
+  <div class="swiper-pagination"></div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-button-next"></div>
+  <div class="swiper-scrollbar"></div>
+</div>
+
+{{#if isAuthenticated}}
+  <div class="gallery-admin-actions">
+    <a href="/gallery/add" class="add-image-button">Add Image</a>
+  </div>
+{{/if}}
+
+<script>
+  const swiper = new Swiper('.swiper', {
+    loop: false,
+    pagination: {
+      el: '.swiper-pagination',
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    scrollbar: {
+      el: '.swiper-scrollbar',
+    },
+  });
+</script>
+</body>

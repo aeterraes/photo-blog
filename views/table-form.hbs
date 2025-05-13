@@ -1,0 +1,54 @@
+<div class="form-container">
+  <h2 class="merch-header">Create Your Merchandise Package</h2>
+  <form id="merchForm">
+    <div class="form-group">
+      <label>Merch Type:</label>
+      <div class="checkbox-group">
+        <input type="checkbox" id="postcard" name="merchType" value="Postcard">
+        <label for="postcard">Postcard</label>
+
+        <input type="checkbox" id="poster" name="merchType" value="Poster">
+        <label for="poster">Poster</label>
+
+        <input type="checkbox" id="pin" name="merchType" value="Pin">
+        <label for="pin">Pin</label>
+
+        <input type="checkbox" id="shopper" name="merchType" value="Shopper">
+        <label for="shopper">Shopper</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Design Type:</label>
+      <div class="checkbox-group">
+        <input type="checkbox" id="customDesign" name="designType" value="Custom">
+        <label for="customDesign">Custom Design</label>
+
+        <input type="checkbox" id="classicDesign" name="designType" value="Classic">
+        <label for="classicDesign">Classic Design</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Collection:</label>
+      <div class="checkbox-group">
+        <input type="checkbox" id="newAutumn" name="collectionType" value="New Autumn">
+        <label for="newAutumn">New Autumn</label>
+
+        <input type="checkbox" id="classicCollection" name="collectionType" value="Classic">
+        <label for="classicCollection">Classic</label>
+
+        <input type="checkbox" id="forestVibes" name="collectionType" value="Forest Vibes">
+        <label for="forestVibes">Forest Vibes</label>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-button">Create!</button>
+  </form>
+</div>
+
+<div class="result-container">
+  <table id="generatedTable"></table>
+</div>
+
+<script src="/js/table.js" defer></script>
