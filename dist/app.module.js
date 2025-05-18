@@ -25,6 +25,10 @@ const apollo_1 = require("@nestjs/apollo");
 const app_resolver_1 = require("./app.resolver");
 const cache_manager_1 = require("@nestjs/cache-manager");
 const auth_status_middleware_1 = require("./auth/auth-status.middleware");
+const stats_service_1 = require("./stats/stats.service");
+const core_1 = require("@nestjs/core");
+const counting_interceptor_1 = require("./interceptors/counting.interceptor");
+const stats_controller_1 = require("./stats/stats.controller");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer.apply(auth_status_middleware_1.AuthRedirectMiddleware).forRoutes('*');
@@ -47,6 +51,8 @@ exports.AppModule = AppModule = __decorate([
             graphql_1.GraphQLModule.forRoot({
                 driver: apollo_1.ApolloDriver,
                 autoSchemaFile: true,
+                playground: true,
+                introspection: true,
             }),
             cache_manager_1.CacheModule.register({
                 isGlobal: true,
@@ -71,8 +77,16 @@ exports.AppModule = AppModule = __decorate([
                     : process.env.SUPERTOKENS_API_KEY,
             }),
         ],
-        controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService, app_resolver_1.AppResolver],
+        controllers: [app_controller_1.AppController, stats_controller_1.StatsController],
+        providers: [
+            app_service_1.AppService,
+            app_resolver_1.AppResolver,
+            stats_service_1.StatsService,
+            {
+                provide: core_1.APP_INTERCEPTOR,
+                useClass: counting_interceptor_1.CountingInterceptor,
+            },
+        ],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
