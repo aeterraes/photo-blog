@@ -1,0 +1,23 @@
+<div class="stats-container">
+  <h2>Top Active Pages</h2>
+  {{#if stats.length}}
+    <table class="stats-table">
+      <thead>
+      <tr>
+        <th>Active Page</th>
+        <th>Action Count</th>
+      </tr>
+      </thead>
+      <tbody>
+      {{#each stats}}
+        <tr>
+          <td>{{this.endpoint}}</td>
+          <td>{{this.requestCount}}</td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  {{else}}
+    <p>No data</p>
+  {{/if}}
+</div>

@@ -16,6 +16,10 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AppResolver } from './app.resolver';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AuthRedirectMiddleware } from './auth/auth-status.middleware';
+import { StatsService } from './stats/stats.service';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { CountingInterceptor } from './interceptors/counting.interceptor';
+import { StatsController } from './stats/stats.controller';
 
 @Module({
   imports: [
@@ -59,8 +63,16 @@ import { AuthRedirectMiddleware } from './auth/auth-status.middleware';
           : process.env.SUPERTOKENS_API_KEY,
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService, AppResolver],
+  controllers: [AppController, StatsController],
+  providers: [
+    AppService,
+    AppResolver,
+    StatsService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CountingInterceptor,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
